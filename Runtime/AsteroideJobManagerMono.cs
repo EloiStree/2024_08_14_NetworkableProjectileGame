@@ -17,11 +17,13 @@ public class AsteroideJobManagerMono : MonoBehaviour
     public byte m_poolId=1;
     public int m_poolItemMax = 128*128;
     public int m_numberOfAsteroidsInGame = 20;
+    public SNAM16K_ObjectBool m_isExisting;
     public SNAM16K_ObjectBool m_asteroidDestroyedEvent;
     public SNAM16K_ObjectBool m_asteroidCreationEvent;
-    public SNAM16K_AsteroidCreatedEvent m_asteroidInGame;
-    public SNAM16K_AsteroidMoveConstant m_asteroidMoveUpdateInfo;
-    public SNAM16K_AsteroidCapsulePosition  m_asteroidPosition;
+    public SNAM16K_ProjectileCreatedEvent m_asteroidInGame;
+    public SNAM16K_ProjectileMoveConstant m_asteroidMoveUpdateInfo;
+    public SNAM16K_ProjectileCapsulePosition  m_asteroidPosition;
+    public SNAM16K_ObjectVector3 m_currentPosition;
 
 
     public Transform m_centerOfSpace;
@@ -29,8 +31,8 @@ public class AsteroideJobManagerMono : MonoBehaviour
     public float m_skyHeight=ushort.MaxValue/2f;
     public float m_squareWidth = ushort.MaxValue / 2f;
 
-    public UnityEvent<STRUCT_AsteroidCreationEvent> m_onAsteroidCreated;
-    public UnityEvent<STRUCT_AsteroidDestructionEvent> m_onAsteroidDestroyed;
+    public UnityEvent<STRUCT_ProjectileCreationEvent> m_onAsteroidCreated;
+    public UnityEvent<STRUCT_ProjectileDestructionEvent> m_onAsteroidDestroyed;
 
     public float m_minSpeed=1;
     public float m_maxSpeed=10;
@@ -48,8 +50,8 @@ public class AsteroideJobManagerMono : MonoBehaviour
     {
         for (int i = 0; i < m_poolItemMax; i++)
         {
-            STRUCT_AsteroidCreationEvent a = m_asteroidInGame[i];
-            STRUCT_AsteroidMoveConstant m= m_asteroidMoveUpdateInfo[i];
+            STRUCT_ProjectileCreationEvent a = m_asteroidInGame[i];
+            STRUCT_ProjectileMoveConstant m= m_asteroidMoveUpdateInfo[i];
             a.m_poolId = m_poolId;
             a.m_poolItemIndex = i;
             SetRandomStartPointTo(ref a,ref m);
@@ -61,11 +63,11 @@ public class AsteroideJobManagerMono : MonoBehaviour
         }
     }
 
-    private void SetRandomStartPointTo(ref STRUCT_AsteroidCreationEvent asteroidCreationEvent, ref STRUCT_AsteroidMoveConstant moveInfo)
+    private void SetRandomStartPointTo(ref STRUCT_ProjectileCreationEvent asteroidCreationEvent, ref STRUCT_ProjectileMoveConstant moveInfo)
     {
         asteroidCreationEvent.m_startPosition = new Vector3(UnityEngine.Random.Range(-m_squareWidth, m_squareWidth), UnityEngine.Random.Range(0, m_skyHeight), UnityEngine.Random.Range(-m_squareWidth, m_squareWidth));
-        asteroidCreationEvent.m_startRotationEuler = Quaternion.Euler(UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360));
-        asteroidCreationEvent.m_startDirection = asteroidCreationEvent.m_startRotationEuler * Vector3.forward;
+        asteroidCreationEvent.m_startRotation = Quaternion.Euler(UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360));
+        asteroidCreationEvent.m_startDirection = asteroidCreationEvent.m_startRotation * Vector3.forward;
         asteroidCreationEvent.m_speedInMetersPerSecond = UnityEngine.Random.Range(m_minSpeed, m_maxSpeed);
         asteroidCreationEvent.m_colliderRadius = UnityEngine.Random.Range(m_minSize, m_maxSize);
         asteroidCreationEvent.m_serverUtcNowTicks = DateTime.UtcNow.Ticks;
@@ -86,18 +88,40 @@ public class AsteroideJobManagerMono : MonoBehaviour
     public WatchAndDateTimeActionResult m_moveObject;
     public WatchAndDateTimeActionResult m_outOfBoxed;
     public WatchAndDateTimeActionResult m_broadcastNewPosition;
+
+    private void Awake()
+    {
+        SetProjectileInGameToInsepctorValue();
+    }
+
+    private void SetProjectileInGameToInsepctorValue()
+    {
+        SetProjectileInGame(m_numberOfAsteroidsInGame);
+    }
+
+    public void SetProjectileInGame(int projectile)
+    {
+        for (int i = 0; i < m_isExisting.GetLength(); i++)
+        {
+            m_isExisting[i] = i < projectile;
+        }
+    }
+
     public void Update()
     {
         m_moveObject.StartCounting();
         m_updateTick++;
         m_currentTickServerUtcPrevious = m_currentTickServerUtcNow;
         m_currentTickServerUtcNow = DateTime.UtcNow.Ticks;
-        STRUCTJOB_AsteroideMoveJob moveJob = new STRUCTJOB_AsteroideMoveJob();
-        moveJob.m_asteroidInGame = m_asteroidMoveUpdateInfo.GetNativeArray();
+        STRUCTJOB_ProjectileMoveJob moveJob = new STRUCTJOB_ProjectileMoveJob();
+        moveJob.m_projectileInGame = m_asteroidMoveUpdateInfo.GetNativeArray();
         moveJob.m_currentExistance = m_asteroidPosition.GetNativeArray();
+        moveJob.m_isUsed = m_isExisting.GetNativeArray();
         moveJob.m_currentMaxAsteroide = m_numberOfAsteroidsInGame;
         moveJob.m_serverCurrentUtcNowTicks = m_currentTickServerUtcNow;
         moveJob.m_serverCurrentUtcPreviousTicks = m_currentTickServerUtcPrevious;
+        moveJob.m_currentPosition = m_currentPosition.GetNativeArray();
+        moveJob.m_hidePosition = new Vector3(-404, -404, -404);
         JobHandle moveJobHandle = moveJob.Schedule(m_numberOfAsteroidsInGame, 64);
         moveJobHandle.Complete();
 
@@ -122,13 +146,13 @@ public class AsteroideJobManagerMono : MonoBehaviour
             {
                 m_asteroidDestroyedEvent[i] = false;
                 m_asteroidCreationEvent[i] = true;
-                STRUCT_AsteroidCreationEvent a = m_asteroidInGame[i];
-                STRUCT_AsteroidMoveConstant m = m_asteroidMoveUpdateInfo[i];
+                STRUCT_ProjectileCreationEvent a = m_asteroidInGame[i];
+                STRUCT_ProjectileMoveConstant m = m_asteroidMoveUpdateInfo[i];
                 SetRandomStartPointTo(ref a, ref m);
 
                 m_asteroidMoveUpdateInfo[i] = m;
                 m_asteroidInGame[i] = a;
-                m_onAsteroidDestroyed.Invoke(new STRUCT_AsteroidDestructionEvent() { 
+                m_onAsteroidDestroyed.Invoke(new STRUCT_ProjectileDestructionEvent() { 
                     m_poolId = m_poolId, 
                     m_poolItemIndex = i,
                     m_serverUtcNowTicks = 
@@ -174,19 +198,19 @@ public class AsteroideJobManagerMono : MonoBehaviour
 
 
 [System.Serializable]
-public struct STRUCT_AsteroidCreationEvent {
+public struct STRUCT_ProjectileCreationEvent {
     public byte m_poolId;
     public int m_poolItemIndex;
     public long m_serverUtcNowTicks;
     public Vector3 m_startPosition;
-    public Quaternion m_startRotationEuler;
+    public Quaternion m_startRotation;
     public Vector3 m_startDirection;
     public float m_speedInMetersPerSecond;
     public float m_colliderRadius;
 }
 
 [System.Serializable]
-public struct STRUCT_AsteroidMoveConstant {
+public struct STRUCT_ProjectileMoveConstant {
 
     public long m_startUtcNowTicks;
     public float m_speedInMetersPerSecond;
@@ -197,14 +221,14 @@ public struct STRUCT_AsteroidMoveConstant {
 
 
 [System.Serializable]
-public struct STRUCT_AsteroidDestructionEvent { 
+public struct STRUCT_ProjectileDestructionEvent { 
     public byte m_poolId;
     public int m_poolItemIndex;
     public long m_serverUtcNowTicks;
 }
 
 [System.Serializable]
-public struct STRUCT_AsteroidCapsulePosition
+public struct STRUCT_ProjectileCapsulePosition
 {
     public Vector3 m_currentPosition;
     public Vector3 m_previousPosition;
@@ -212,43 +236,54 @@ public struct STRUCT_AsteroidCapsulePosition
 }
 
 [BurstCompile]
-public struct STRUCTJOB_AsteroideMoveJob : IJobParallelFor
+public struct STRUCTJOB_ProjectileMoveJob : IJobParallelFor
 {
 
     [ReadOnly]
-    public NativeArray<STRUCT_AsteroidMoveConstant> m_asteroidInGame;
+    public NativeArray<bool> m_isUsed;
+    [ReadOnly]
+    public NativeArray<STRUCT_ProjectileMoveConstant> m_projectileInGame;
 
-    public NativeArray<STRUCT_AsteroidCapsulePosition> m_currentExistance;
-
+    public NativeArray<STRUCT_ProjectileCapsulePosition> m_currentExistance;
+    [WriteOnly]
+    public NativeArray<Vector3> m_currentPosition;
     public int m_currentMaxAsteroide;
     public long m_serverCurrentUtcNowTicks;
     public long m_serverCurrentUtcPreviousTicks;
+    public Vector3 m_hidePosition;
     public const float m_tickToSeconds= 1f/(float)TimeSpan.TicksPerSecond;
 
     public void Execute(int index)
     {
         if (index >= m_currentMaxAsteroide)
         {
+
             return;
         }
-        STRUCT_AsteroidMoveConstant a = m_asteroidInGame[index];
-        STRUCT_AsteroidCapsulePosition p = m_currentExistance[index];
+        if (!m_isUsed[index])
+        {
+            m_currentPosition[index] = m_hidePosition;
+
+            return;
+            
+        }
+        STRUCT_ProjectileMoveConstant a = m_projectileInGame[index];
+        STRUCT_ProjectileCapsulePosition p = m_currentExistance[index];
      
         p.m_previousPosition = p.m_currentPosition;
         float timeSinceStart = 
-            (m_serverCurrentUtcNowTicks - m_asteroidInGame[index].m_startUtcNowTicks)*m_tickToSeconds;
-        float distance = m_asteroidInGame[index].m_speedInMetersPerSecond * timeSinceStart;
+            (m_serverCurrentUtcNowTicks - m_projectileInGame[index].m_startUtcNowTicks)*m_tickToSeconds;
+        float distance = m_projectileInGame[index].m_speedInMetersPerSecond * timeSinceStart;
         p.m_currentPosition= a.m_startPoint+ a.m_direction * distance;
         m_currentExistance[index] = p;
-
-      
+        m_currentPosition[index]= p.m_currentPosition;
     }
 }
 
 
 public struct STRUCTJOB_AsteroideMoveApplyToTransform : IJobParallelForTransform
 {
-    public NativeArray<STRUCT_AsteroidCapsulePosition> m_currentExistance;
+    public NativeArray<STRUCT_ProjectileCapsulePosition> m_currentExistance;
     public int m_currentMaxAsteroide;
     public Vector3 m_unusedWorldPosition;
 
@@ -267,7 +302,7 @@ public struct STRUCTJOB_AsteroideMoveApplyToTransform : IJobParallelForTransform
 public struct STRUCTJOB_AsteroideOutOfBoundJob : IJobParallelFor
 {
     public NativeArray<bool> m_destroyEvent;
-    public NativeArray<STRUCT_AsteroidCapsulePosition> m_currentExistance;
+    public NativeArray<STRUCT_ProjectileCapsulePosition> m_currentExistance;
     public long m_serverCurrentUtcNowTicks;
     public long m_serverCurrentUtcPreviousTicks;
 
@@ -275,6 +310,7 @@ public struct STRUCTJOB_AsteroideOutOfBoundJob : IJobParallelFor
     public Vector3 m_centerPosition;
     public float m_maxHeightDistance;
     public float m_maxWidthDistance;
+    public bool m_useDownPart;
 
     public void Execute(int index)
     {
@@ -283,11 +319,23 @@ public struct STRUCTJOB_AsteroideOutOfBoundJob : IJobParallelFor
         {
             return;
         }
-        if(m_currentExistance[index].m_currentPosition.y > m_maxHeightDistance
-            || m_currentExistance[index].m_currentPosition.y <-m_maxHeightDistance)
+       
+        if (m_useDownPart)
         {
-            m_destroyEvent[index] = true;
-            return;
+            if (m_currentExistance[index].m_currentPosition.y > m_maxHeightDistance
+                        || m_currentExistance[index].m_currentPosition.y < -m_maxHeightDistance)
+            {
+                m_destroyEvent[index] = true;
+                return;
+            }
+        }
+        else {
+            if (m_currentExistance[index].m_currentPosition.y > m_maxHeightDistance
+                || m_currentExistance[index].m_currentPosition.y < 0f)
+            {
+                m_destroyEvent[index] = true;
+                return;
+            }
         }
         if (m_currentExistance[index].m_currentPosition.x > m_maxWidthDistance 
             || m_currentExistance[index].m_currentPosition.x < -m_maxWidthDistance)

@@ -42,6 +42,11 @@ public class SNAM16kTo_ObjectBool_ConditionEvent : MonoBehaviour
         }
         m_hasFalse = hasFalse;
         m_hasTrue = hasTrue;
+
+        if (hasTrue)
+                m_eventTrue.Invoke();
+        if (hasFalse)
+                m_eventFalse.Invoke();
        
     }
 }

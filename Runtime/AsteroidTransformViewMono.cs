@@ -31,11 +31,11 @@ public class AsteroidTransformViewMono : MonoBehaviour {
     {
         if(index< m_transformToUsed.Length)
         {
-            STRUCT_AsteroidCreationEvent c = m_manager.m_asteroidInGame[index];
+            STRUCT_ProjectileCreationEvent c = m_manager.m_asteroidInGame[index];
             Transform t = m_transformToUsed[index];
             t.gameObject.SetActive(true);
             t.position = c.m_startPosition;
-            t.rotation = c.m_startRotationEuler;
+            t.rotation = c.m_startRotation;
             t.localScale= Vector3.one * c.m_colliderRadius * 2;
     
         }

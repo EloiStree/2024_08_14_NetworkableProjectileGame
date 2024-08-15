@@ -9,9 +9,9 @@ using UnityEngine.Jobs;
 
 public class AsteroidByteToTransformViewMono : MonoBehaviour
 {
-    public NativeArray<STRUCT_AsteroidCreationEvent> m_asteroidCreationEventRef;
-    public NativeArray<STRUCT_AsteroidMoveConstant> m_asteroidMovement;
-    public NativeArray<STRUCT_AsteroidCapsulePosition> m_asteroidPosition;
+    public NativeArray<STRUCT_ProjectileCreationEvent> m_asteroidCreationEventRef;
+    public NativeArray<STRUCT_ProjectileMoveConstant> m_asteroidMovement;
+    public NativeArray<STRUCT_ProjectileCapsulePosition> m_asteroidPosition;
 
     public Transform m_usedPosition;
 
@@ -22,9 +22,9 @@ public class AsteroidByteToTransformViewMono : MonoBehaviour
 
     private void Awake()
     {
-        SetNativeArray(new NativeArray<STRUCT_AsteroidCreationEvent>(0, Allocator.Persistent));
+        SetNativeArray(new NativeArray<STRUCT_ProjectileCreationEvent>(0, Allocator.Persistent));
     }
-    public void SetNativeArray(NativeArray<STRUCT_AsteroidCreationEvent> asteroid)
+    public void SetNativeArray(NativeArray<STRUCT_ProjectileCreationEvent> asteroid)
     {
 
         m_asteroidCreationEventRef = asteroid;
@@ -40,8 +40,8 @@ public class AsteroidByteToTransformViewMono : MonoBehaviour
             {
                 m_asteroidMovement.Dispose();
             }
-            m_asteroidPosition = new NativeArray<STRUCT_AsteroidCapsulePosition>(asteroid.Length, Allocator.Persistent);
-            m_asteroidMovement = new NativeArray<STRUCT_AsteroidMoveConstant>(asteroid.Length, Allocator.Persistent);
+            m_asteroidPosition = new NativeArray<STRUCT_ProjectileCapsulePosition>(asteroid.Length, Allocator.Persistent);
+            m_asteroidMovement = new NativeArray<STRUCT_ProjectileMoveConstant>(asteroid.Length, Allocator.Persistent);
         }
     }
     private void OnDestroy()
@@ -65,8 +65,8 @@ public class AsteroidByteToTransformViewMono : MonoBehaviour
         m_moveObject.StartCounting();
         m_currentTickServerUtcPrevious = m_currentTickServerUtcNow;
         m_currentTickServerUtcNow = DateTime.UtcNow.Ticks;
-        STRUCTJOB_AsteroideMoveJob moveJob = new STRUCTJOB_AsteroideMoveJob();
-        moveJob.m_asteroidInGame = m_asteroidMovement;
+        STRUCTJOB_ProjectileMoveJob moveJob = new STRUCTJOB_ProjectileMoveJob();
+        moveJob.m_projectileInGame = m_asteroidMovement;
         moveJob.m_currentExistance = m_asteroidPosition;
         moveJob.m_currentMaxAsteroide = m_asteroidCreationEventRef.Length;
         moveJob.m_serverCurrentUtcNowTicks = m_currentTickServerUtcNow;

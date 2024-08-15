@@ -1,30 +1,30 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 
-public class Sleepy_StayAliveMono : MonoBehaviour
+public class StayAliveTimerCountMono : MonoBehaviour
 {
     public float m_timer;
-    public Transform m_playerToMove;
-    public Transform m_whereToRespawn;
 
-    public string m_timerFormer="{0}:{1}";
+    public string m_timerFormer="{0:00}:{1:00}";
+    public UnityEvent<float> m_onTimingChangedFloat;
     public UnityEvent<string> m_onTimingChanged;
     public UnityEvent<string> m_onPreviousChanged;
     public UnityEvent<string> m_onBestScoreChanged;
 
+    public DateTime m_startTime;
+    public void Start()
+    {
+        m_startTime = DateTime.Now;
+    }
     public void Update()
     {
-        m_timer += Time.deltaTime;
-        if (m_timer > 10)
-        {
-            m_playerToMove.position = m_whereToRespawn.position;
-            m_timer = 0;
-        }
-
+        m_timer = (float)(DateTime.Now- m_startTime).TotalSeconds;
         string result = ConvertToFormatFromTime(m_timer);
         m_onTimingChanged.Invoke(result);
+        m_onTimingChangedFloat.Invoke(m_timer);
     }
 
     private string ConvertToFormatFromTime(float time)
@@ -37,7 +37,7 @@ public class Sleepy_StayAliveMono : MonoBehaviour
 
     public float m_previousScore;
     public float m_bestScore;
-    public void NotifyAsTouched()
+    public void ResetCountToZeroAndRecordScore()
     {
         m_previousScore = m_timer;
         m_onPreviousChanged.Invoke(ConvertToFormatFromTime(m_previousScore));
@@ -46,6 +46,9 @@ public class Sleepy_StayAliveMono : MonoBehaviour
             m_bestScore = m_timer;
             m_onBestScoreChanged.Invoke(ConvertToFormatFromTime(m_bestScore));
         }
-        m_playerToMove.position = m_whereToRespawn.position;
+        m_startTime = DateTime.Now;
+        m_timer = 0;
     }
 }
+
+

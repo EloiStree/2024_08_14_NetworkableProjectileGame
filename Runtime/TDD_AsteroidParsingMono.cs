@@ -4,10 +4,10 @@ public class TDD_AsteroidParsingMono: MonoBehaviour {
 
     public byte m_createdStartByte;
     public byte m_destroyedStartByte;
-    public STRUCT_AsteroidCreationEvent m_asteroidCreationEvent;
-    public STRUCT_AsteroidCreationEvent m_asteroidCreationEventParsed;
-    public STRUCT_AsteroidDestructionEvent m_asteroidDestructionEvent;
-    public STRUCT_AsteroidDestructionEvent m_asteroidDestructionEventParsed;
+    public STRUCT_ProjectileCreationEvent m_asteroidCreationEvent;
+    public STRUCT_ProjectileCreationEvent m_asteroidCreationEventParsed;
+    public STRUCT_ProjectileDestructionEvent m_asteroidDestructionEvent;
+    public STRUCT_ProjectileDestructionEvent m_asteroidDestructionEventParsed;
 
     private void OnValidate()
     {

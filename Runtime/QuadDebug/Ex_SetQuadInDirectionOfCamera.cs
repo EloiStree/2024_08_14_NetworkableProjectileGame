@@ -27,7 +27,7 @@ public class Ex_SetQuadInDirectionOfCamera : MonoBehaviour
     private void Awake()
     {
        
-        if (m_objectToLookAt == null)
+        if (m_objectToLookAt == null && Camera.main)
             m_objectToLookAt = Camera.main.transform;
         m_verticePosition = new NativeArray<Vector3>(SNAM16K.ARRAY_MAX_SIZE*4, Allocator.Persistent);
     }

@@ -9,17 +9,23 @@ using UnityEngine.Events;
 public class SNAM16K_SphereColliderToSphereCollisions : MonoBehaviour
 {
 
-    public SphereCollider m_target;
+    public Transform m_targetCener;
+    public Transform m_targetRadiusPoint;
+
     public SNAM16K_ObjectBool m_isActive;
     public SNAM16K_ObjectVector3 m_sphereCenter;
     public SNAM16K_ObjectFloat m_sphereRadius;
     public SNAM16K_ObjectBool m_hadColliding;
 
+    
+
     public void Update()
     {
+        float radius = Vector3.Distance(m_targetCener.position, m_targetRadiusPoint.position);
+
         STRUCTJOB_CheckCollision job = new STRUCTJOB_CheckCollision();
-        job.m_targetPosition = m_target.transform.position;
-        job.m_targetRadius = m_target.radius;
+        job.m_targetPosition = m_targetCener.transform.position;
+        job.m_targetRadius = radius;
         job.m_positions = m_sphereCenter.GetNativeArray();
         job.m_radius = m_sphereRadius.GetNativeArray();
         job.m_isActive = m_isActive.GetNativeArray();
@@ -27,11 +33,9 @@ public class SNAM16K_SphereColliderToSphereCollisions : MonoBehaviour
 
         JobHandle jobHandle = job.Schedule(m_sphereCenter.GetNativeArray().Length, 64);
         jobHandle.Complete();
-
-
     }
 
-    public struct STRUCTJOB_CheckCollision :IJobParallelFor {
+    public struct STRUCTJOB_CheckCollision : IJobParallelFor {
 
         public Vector3 m_targetPosition;
         public float m_targetRadius;
@@ -58,6 +62,10 @@ public class SNAM16K_SphereColliderToSphereCollisions : MonoBehaviour
                 {
                     m_isColliding[index] = false;
                 }
+            }
+            if(!m_isActive[index] && m_isColliding[index])
+            {
+                m_isColliding[index] = false;
             }
         }
     }

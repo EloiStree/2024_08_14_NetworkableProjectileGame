@@ -8,7 +8,7 @@ using UnityEngine;
 public class Split16K_CapsulePositionsToVector3 : MonoBehaviour
 {
     
-    public SNAM16K_AsteroidCapsulePosition m_capsulePositions;
+    public SNAM16K_ProjectileCapsulePosition m_capsulePositions;
     public SNAM16K_ObjectVector3 m_current;
     public SNAM16K_ObjectVector3 m_previous;
     public bool m_useUpdate=true;
@@ -31,7 +31,7 @@ public class Split16K_CapsulePositionsToVector3 : MonoBehaviour
     public struct STRUCTJOB_Split16K_CapsulePositionsToVector3 : IJobParallelFor
     {
         [ReadOnly]
-        public NativeArray<STRUCT_AsteroidCapsulePosition> m_capsulePositions;
+        public NativeArray<STRUCT_ProjectileCapsulePosition> m_capsulePositions;
 
         [WriteOnly]
         public NativeArray<Vector3> m_currentPosition;

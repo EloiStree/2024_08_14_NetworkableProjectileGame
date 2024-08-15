@@ -8,9 +8,9 @@ public class AsteroidCreationEventSpliterMono : MonoBehaviour
     public SNAM16K_ObjectFloat m_asteroidRadiusSize;
     public SNAM16K_ObjectBool m_asteroidActive;
 
-    public STRUCT_AsteroidCreationEvent m_lastReceived;
+    public STRUCT_ProjectileCreationEvent m_lastReceived;
     public string m_lastReceivedString;
-    public void PushIn(STRUCT_AsteroidCreationEvent receivedEvent) {
+    public void PushIn(STRUCT_ProjectileCreationEvent receivedEvent) {
 
         m_lastReceived = receivedEvent;
         m_lastReceivedString= DateTime.UtcNow.ToString("HH:mm:ss.fff") + " " + receivedEvent.m_poolItemIndex + " " + receivedEvent.m_colliderRadius;
@@ -42,9 +42,5 @@ public class AsteroidCreationEventSpliterMono : MonoBehaviour
             }
     }
 
-    //public void PushIn(STRUCT_AsteroidDestructionEvent receivedEvent) {
-    //    if( m_asteroidActive)
-    //    m_asteroidActive[receivedEvent.m_poolItemIndex] = false;
-    //}
 
 }

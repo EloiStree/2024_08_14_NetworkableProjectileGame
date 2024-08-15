@@ -13,7 +13,7 @@ public class SphereAroundPlayerMono : MonoBehaviour
     public Transform m_playerReference;
     public SNAM16K_ObjectVector3 m_spherePosition;
     public SNAM16k_ItemIndexDistance m_itemDistance;
-    public SNAM16K_AsteroidCreatedEvent m_asteroidInfo;
+    public SNAM16K_ProjectileCreatedEvent m_asteroidInfo;
 
     public float m_scopeDistance = 10;
     public List<STRUCT_ItemObjectDistance>  m_nearItem;
