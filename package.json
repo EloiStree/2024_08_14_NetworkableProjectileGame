@@ -1,0 +1,23 @@
+
+{                                                                                
+  "name": "be.eloistree.networkableprojectilsgame",                              
+  "displayName": "Networkable Projectils Game",                        
+  "version": "0.0.1",                         
+  "unity": "2018.1",                             
+  "unityRelease": "",                             
+  "description": "Tool that allows to make networkable game with projectils that are computable on time and not sync.",                         
+  "keywords": ["Script","Tool"],                       
+  "dependencies":{},     
+  "relatedPackages":{},     
+  "samples" : [],     
+  "author" : {
+"name":"",
+"mail":"",
+"url":""},     
+  "repository":{
+"type":"Git",
+"url":"https://github.com/EloiStree/2024_08_14_NetworkableAsteroidsGame.git",
+"footprint":"",
+"revision":""},     
+  "category": "Script"                   
+} 

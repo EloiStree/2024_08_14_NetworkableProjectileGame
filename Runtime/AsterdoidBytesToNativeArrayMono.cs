@@ -12,12 +12,12 @@ public class AsterdoidBytesToNativeArrayMono : MonoBehaviour {
     public byte m_poolId=0;
 
     public int m_nativeInitialMaxSize = 128 * 128;
-    public NativeArray<AsteroidCreationEvent> m_asteroidCreationEvent;
+    public NativeArray<STRUCT_AsteroidCreationEvent> m_asteroidCreationEvent;
 
-    public UnityEvent<NativeArray<AsteroidCreationEvent>> m_onSizeChanged;
+    public UnityEvent<NativeArray<STRUCT_AsteroidCreationEvent>> m_onSizeChanged;
     public void OnEnable()
     {
-        m_asteroidCreationEvent = new NativeArray<AsteroidCreationEvent>(m_nativeInitialMaxSize, Allocator.Persistent);
+        m_asteroidCreationEvent = new NativeArray<STRUCT_AsteroidCreationEvent>(m_nativeInitialMaxSize, Allocator.Persistent);
         m_onSizeChanged.Invoke(m_asteroidCreationEvent);
 
 
@@ -28,7 +28,7 @@ public class AsterdoidBytesToNativeArrayMono : MonoBehaviour {
         m_onSizeChanged.Invoke(m_asteroidCreationEvent);
     }
 
-    public AsteroidCreationEvent asteroidCreationEvent;
+    public STRUCT_AsteroidCreationEvent asteroidCreationEvent;
     public void PushBytesToNativeArray(byte[] bytes)
     {
         if (bytes == null) return;

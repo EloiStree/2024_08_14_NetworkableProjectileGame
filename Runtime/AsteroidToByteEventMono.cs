@@ -12,13 +12,13 @@ public class AsteroidToByteEventMono : MonoBehaviour
 
     public UnityEvent<byte[]> m_onByteToPushed;
 
-    public void PushAsteroidCreated(AsteroidCreationEvent created)
+    public void PushAsteroidCreated(STRUCT_AsteroidCreationEvent created)
     {
         byte[] bytes = ByteParseAsteroidUtility.ParseToBytes_AsteroidCreated(m_createdStartByte, created);
         m_onByteToPushed.Invoke(bytes);
     }
 
-    public void PushAsteroidDestroy(AsteroidDestructionEvent destroyed) { 
+    public void PushAsteroidDestroy(STRUCT_AsteroidDestructionEvent destroyed) { 
         byte[] bytes = ByteParseAsteroidUtility.ParseToByte_AsteroidDestroy(m_destroyedStartByte, destroyed);
         m_onByteToPushed.Invoke(bytes);
     }
@@ -26,7 +26,7 @@ public class AsteroidToByteEventMono : MonoBehaviour
 
 
 public class ByteParseAsteroidUtility {
-    public static byte[] ParseToBytes_AsteroidCreated(byte startByteType, AsteroidCreationEvent created)
+    public static byte[] ParseToBytes_AsteroidCreated(byte startByteType, STRUCT_AsteroidCreationEvent created)
     {
         byte[] bytes = new byte[1 + 1 + 4 + 9 * 4 + 2 * 4 + 8];
         bytes[0] = startByteType;
@@ -48,7 +48,7 @@ public class ByteParseAsteroidUtility {
         return bytes;
     }
 
-    public static AsteroidCreationEvent ParseToObject_AsteroidCreated(byte startBytetype, byte[] bytes, ref AsteroidCreationEvent asteroid)
+    public static STRUCT_AsteroidCreationEvent ParseToObject_AsteroidCreated(byte startBytetype, byte[] bytes, ref STRUCT_AsteroidCreationEvent asteroid)
     {
         if (bytes.Length != 58) throw new Exception();
         asteroid.m_poolId = bytes[1];
@@ -62,7 +62,7 @@ public class ByteParseAsteroidUtility {
         return asteroid;
     }
 
-    public static AsteroidDestructionEvent ParseToObject_AsteroidDestroy(byte startBytetype, byte[] bytes , ref AsteroidDestructionEvent asteroid)
+    public static STRUCT_AsteroidDestructionEvent ParseToObject_AsteroidDestroy(byte startBytetype, byte[] bytes , ref STRUCT_AsteroidDestructionEvent asteroid)
     {
         if (bytes.Length != 14) throw new Exception("AsteroidDestructionEvent ParseToObject_AsteroidDestroy bytes.Length != 14");
         asteroid.m_poolId = bytes[1];
@@ -70,7 +70,7 @@ public class ByteParseAsteroidUtility {
         asteroid.m_serverUtcNowTicks = BitConverter.ToInt64(bytes, 6);
         return asteroid;
     }
-    public static byte[] ParseToByte_AsteroidDestroy(byte startByteType, AsteroidDestructionEvent destroyed)
+    public static byte[] ParseToByte_AsteroidDestroy(byte startByteType, STRUCT_AsteroidDestructionEvent destroyed)
     {
         byte[] bytes = new byte[1 + 1 + 4 + 8];
         bytes[0] = startByteType;

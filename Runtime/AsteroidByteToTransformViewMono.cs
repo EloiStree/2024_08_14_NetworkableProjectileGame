@@ -9,18 +9,26 @@ using UnityEngine.Jobs;
 
 public class AsteroidByteToTransformViewMono : MonoBehaviour
 {
-    public NativeArray<AsteroidCreationEvent> m_asteroidCreationEventRef;
-    public NativeArray<AsteroidMoveConstant> m_asteroidMovement;
-    public NativeArray<AsteroidCapsulePosition> m_asteroidPosition;
+    public NativeArray<STRUCT_AsteroidCreationEvent> m_asteroidCreationEventRef;
+    public NativeArray<STRUCT_AsteroidMoveConstant> m_asteroidMovement;
+    public NativeArray<STRUCT_AsteroidCapsulePosition> m_asteroidPosition;
+
+    public Transform m_usedPosition;
 
     public Transform[] m_whatToMove;
 
 
     public int m_currentLenght;
-    public void SetNativeArray(NativeArray<AsteroidCreationEvent> asteroid)
+
+    private void Awake()
+    {
+        SetNativeArray(new NativeArray<STRUCT_AsteroidCreationEvent>(0, Allocator.Persistent));
+    }
+    public void SetNativeArray(NativeArray<STRUCT_AsteroidCreationEvent> asteroid)
     {
 
         m_asteroidCreationEventRef = asteroid;
+        if (m_asteroidCreationEventRef == null) return;
         if (asteroid.Length != m_currentLenght)
         {
             m_currentLenght = asteroid.Length;
@@ -32,8 +40,8 @@ public class AsteroidByteToTransformViewMono : MonoBehaviour
             {
                 m_asteroidMovement.Dispose();
             }
-            m_asteroidPosition = new NativeArray<AsteroidCapsulePosition>(asteroid.Length, Allocator.Persistent);
-            m_asteroidMovement = new NativeArray<AsteroidMoveConstant>(asteroid.Length, Allocator.Persistent);
+            m_asteroidPosition = new NativeArray<STRUCT_AsteroidCapsulePosition>(asteroid.Length, Allocator.Persistent);
+            m_asteroidMovement = new NativeArray<STRUCT_AsteroidMoveConstant>(asteroid.Length, Allocator.Persistent);
         }
     }
     private void OnDestroy()
@@ -53,10 +61,11 @@ public class AsteroidByteToTransformViewMono : MonoBehaviour
     public WatchAndDateTimeActionResult m_moveObject;
     public void Update()
     {
+        if (m_asteroidCreationEventRef == null) return;
         m_moveObject.StartCounting();
         m_currentTickServerUtcPrevious = m_currentTickServerUtcNow;
         m_currentTickServerUtcNow = DateTime.UtcNow.Ticks;
-        AsteroideMoveJob moveJob = new AsteroideMoveJob();
+        STRUCTJOB_AsteroideMoveJob moveJob = new STRUCTJOB_AsteroideMoveJob();
         moveJob.m_asteroidInGame = m_asteroidMovement;
         moveJob.m_currentExistance = m_asteroidPosition;
         moveJob.m_currentMaxAsteroide = m_asteroidCreationEventRef.Length;
@@ -67,9 +76,12 @@ public class AsteroidByteToTransformViewMono : MonoBehaviour
 
 
 
-        AsteroideMoveApplyToTransform moveApplyToTransform = new AsteroideMoveApplyToTransform();
+        STRUCTJOB_AsteroideMoveApplyToTransform moveApplyToTransform = new STRUCTJOB_AsteroideMoveApplyToTransform();
         moveApplyToTransform.m_currentExistance = m_asteroidPosition;
         moveApplyToTransform.m_currentMaxAsteroide = m_asteroidPosition.Length;
+        if(m_usedPosition != null)
+        moveApplyToTransform.m_unusedWorldPosition = m_usedPosition.position; 
+        else moveApplyToTransform.m_unusedWorldPosition = new Vector3(-404, -404, -404);
         TransformAccessArray transformAccessArray = new TransformAccessArray(m_whatToMove.Length);
         transformAccessArray.SetTransforms(m_whatToMove);
 

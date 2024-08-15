@@ -31,7 +31,7 @@ public class AsteroidTransformViewMono : MonoBehaviour {
     {
         if(index< m_transformToUsed.Length)
         {
-            AsteroidCreationEvent c = m_manager.m_asteroidInGame[index];
+            STRUCT_AsteroidCreationEvent c = m_manager.m_asteroidInGame[index];
             Transform t = m_transformToUsed[index];
             t.gameObject.SetActive(true);
             t.position = c.m_startPosition;
@@ -54,8 +54,8 @@ public class AsteroidTransformViewMono : MonoBehaviour {
 
     public void Update()
     {
-        AsteroideMoveApplyToTransform moveApplyToTransform = new AsteroideMoveApplyToTransform();
-        moveApplyToTransform.m_currentExistance = m_manager.m_asteroidPosition;
+        STRUCTJOB_AsteroideMoveApplyToTransform moveApplyToTransform = new STRUCTJOB_AsteroideMoveApplyToTransform();
+        moveApplyToTransform.m_currentExistance = m_manager.m_asteroidPosition.GetNativeArray();
         moveApplyToTransform.m_currentMaxAsteroide = m_manager.m_numberOfAsteroidsInGame;
         TransformAccessArray transformAccessArray = new TransformAccessArray(m_transformToUsed.Length);
         transformAccessArray.SetTransforms(m_transformToUsed);
