@@ -2127,8 +2127,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_turretTip: {fileID: 3269310788948315105}
-  m_timeBetweenProjectils: 0.001
-  m_projectileSpeed: 10
+  m_timeBetweenProjectils: 0.1
+  m_projectileSpeed: 1
   m_projectileRadius: 0.1
   m_projectilePoolManager: {fileID: 161266470548117284}
   m_lastFire: 
@@ -2716,7 +2716,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_pool: {fileID: 161266470548117284}
   m_whereToExplode: {fileID: 1793208815485721553}
-  m_bulletsPerExplosion: 5000
+  m_bulletsPerExplosion: 200
   m_speed: 10
   m_radius: 0.2
 --- !u!1 &5014492458515143920
@@ -4256,6 +4256,73 @@ MonoBehaviour:
   m_DeselectOnBackgroundClick: 1
   m_PointerBehavior: 0
   m_CursorLockBehavior: 0
+--- !u!1 &7006665266853320733
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 3971290081192389021}
+  - component: {fileID: 4133936216746777296}
+  - component: {fileID: 8811022604719495540}
+  m_Layer: 0
+  m_Name: To Code Later
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &3971290081192389021
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7006665266853320733}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1358208593057174128}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &4133936216746777296
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7006665266853320733}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3595823b9189b91468d60babf53e2458, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_developerNote: I would like this game to be playable with a level loaded. But
+    how to send the mesh collider to the player without sending to much bytes (cause
+    16000 player means 16000 time to send the information )
+--- !u!114 &8811022604719495540
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7006665266853320733}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 82827f06852979e4cb59ba199e3e5574, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_setup:
+    m_links:
+      m_namedUrls:
+      - m_linkName: Octree 65x65x65
+        m_urls: https://github.com/EloiStree/2024_08_14_NetworkableAsteroidsGame/issues/2
+      - m_linkName: Asset store solution
+        m_urls: https://github.com/EloiStree/HelloUnityKeywordForJunior/issues/79
 --- !u!1 &7048353824855089672
 GameObject:
   m_ObjectHideFlags: 0
@@ -4413,8 +4480,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_turretTip: {fileID: 4547717892619953725}
-  m_timeBetweenProjectils: 0.001
-  m_projectileSpeed: 10
+  m_timeBetweenProjectils: 0.1
+  m_projectileSpeed: 1
   m_projectileRadius: 0.1
   m_projectilePoolManager: {fileID: 161266470548117284}
   m_lastFire: 
@@ -5296,6 +5363,7 @@ Transform:
   - {fileID: 2758199067114940980}
   - {fileID: 8307192142729281127}
   - {fileID: 6194233346207342068}
+  - {fileID: 3971290081192389021}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &8902471163797878035
@@ -6482,7 +6550,7 @@ PrefabInstance:
     - target: {fileID: 8705474666683735363, guid: 8ca73b06ec1708848b8b539d1adb4e0e,
         type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8919493986084375126, guid: 8ca73b06ec1708848b8b539d1adb4e0e,
         type: 3}
