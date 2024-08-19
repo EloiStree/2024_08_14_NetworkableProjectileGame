@@ -2049,6 +2049,7 @@ MonoBehaviour:
   m_quadSizeRadius: {fileID: 8366364494873774424}
   m_objectToLookAt: {fileID: 0}
   m_skinnedMeshBoundDistance: 65
+  m_radiusFactor: 1.2
 --- !u!33 &7438597807852223731
 MeshFilter:
   m_ObjectHideFlags: 0
