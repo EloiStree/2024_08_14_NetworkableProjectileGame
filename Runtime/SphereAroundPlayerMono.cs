@@ -22,8 +22,8 @@ public class SphereAroundPlayerMono : MonoBehaviour
 
         STRUCTJOB_ComputeObjectsDistance job = new STRUCTJOB_ComputeObjectsDistance();
         job.m_targetPosition = m_playerReference.position;
-        job.m_spherePosition = m_spherePosition.GetNativeArray();
-        job.m_distanceComputed = m_itemDistance.GetNativeArray();
+        job.m_spherePosition = m_spherePosition.GetNativeArrayHolder().GetNativeArray();
+        job.m_distanceComputed = m_itemDistance.GetNativeArrayHolder().GetNativeArray();
         job.Schedule(SNAM16K.ARRAY_MAX_SIZE, 64).Complete();
 
         m_nearItem= job.m_distanceComputed.Where<STRUCT_ItemObjectDistance>(k => k.m_distance < m_scopeDistance).ToList();

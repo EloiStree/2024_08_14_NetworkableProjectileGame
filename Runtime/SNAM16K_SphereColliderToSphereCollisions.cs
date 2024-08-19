@@ -22,12 +22,12 @@ public class SNAM16K_SphereColliderToSphereCollisions : MonoBehaviour
         STRUCTJOB_CheckCollision job = new STRUCTJOB_CheckCollision();
         job.m_targetPosition = m_targetCener.transform.position;
         job.m_targetRadius = radius;
-        job.m_positions = m_sphereCenter.GetNativeArray();
-        job.m_radius = m_sphereRadius.GetNativeArray();
-        job.m_isActive = m_isActive.GetNativeArray();
-        job.m_isColliding = m_hadColliding.GetNativeArray();
+        job.m_positions = m_sphereCenter.GetNativeArrayHolder().GetNativeArray();
+        job.m_radius = m_sphereRadius.GetNativeArrayHolder().GetNativeArray();
+        job.m_isActive = m_isActive.GetNativeArrayHolder().GetNativeArray();
+        job.m_isColliding = m_hadColliding.GetNativeArrayHolder().GetNativeArray();
 
-        JobHandle jobHandle = job.Schedule(m_sphereCenter.GetNativeArray().Length, 64);
+        JobHandle jobHandle = job.Schedule(m_sphereCenter.GetNativeArrayHolder().GetNativeArray().Length, 64);
         jobHandle.Complete();
     }
 

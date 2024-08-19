@@ -15,17 +15,23 @@ public class Split16K_CapsulePositionsToVector3 : MonoBehaviour
     public void Update()
     {
         if (m_useUpdate) { 
-            Split();
+            SplitCapsuleToCurrentPreviousPosition();
         }
     }
+    STRUCTJOB_Split16K_CapsulePositionsToVector3 m_job;
 
-    public void Split()
+    public void Awake()
     {
-        STRUCTJOB_Split16K_CapsulePositionsToVector3 job = new STRUCTJOB_Split16K_CapsulePositionsToVector3();
-        job.m_capsulePositions = m_capsulePositions.GetNativeArray();
-        job.m_currentPosition = m_current.GetNativeArray();
-        job.m_previousPosition = m_previous.GetNativeArray();
-        job.Schedule(SNAM16K.ARRAY_MAX_SIZE, 64).Complete();
+        m_job = new STRUCTJOB_Split16K_CapsulePositionsToVector3();
+        m_job.m_capsulePositions = m_capsulePositions.GetNativeArrayHolder().GetNativeArray();
+        m_job.m_currentPosition = m_current.GetNativeArrayHolder().GetNativeArray();
+        m_job.m_previousPosition = m_previous.GetNativeArrayHolder().GetNativeArray();
+    }
+
+
+    public void SplitCapsuleToCurrentPreviousPosition()
+    {
+        m_job.Schedule(SNAM16K.ARRAY_MAX_SIZE, 64).Complete();
     }
     [BurstCompile]
     public struct STRUCTJOB_Split16K_CapsulePositionsToVector3 : IJobParallelFor

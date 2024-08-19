@@ -7,10 +7,8 @@ using Unity.Collections;
 using Unity.Jobs;
 using UnityEngine;
 
-public class Ex_SetQuadInDirectionOfCamera : MonoBehaviour
+public class SNAM16kLogic_QuadFacingCamera : MonoBehaviour
 {
-
-
     public MeshFilter m_meshFilter;
     public SkinnedMeshRenderer m_skinMeshRenderer;
 
@@ -22,46 +20,33 @@ public class Ex_SetQuadInDirectionOfCamera : MonoBehaviour
     public SNAM16K_ObjectFloat m_quadSizeRadius;
     public NativeArray<Vector3> m_verticePosition;
     public Transform m_objectToLookAt;
-    public float m_maxDistanceBounds = ushort.MaxValue / 1000;
+    public float m_skinnedMeshBoundDistance = ushort.MaxValue / 1000;
 
     private void Awake()
     {
-       
+
         if (m_objectToLookAt == null && Camera.main)
             m_objectToLookAt = Camera.main.transform;
-        m_verticePosition = new NativeArray<Vector3>(SNAM16K.ARRAY_MAX_SIZE*4, Allocator.Persistent);
+        m_verticePosition = new NativeArray<Vector3>(SNAM16K.ARRAY_MAX_SIZE * 4, Allocator.Persistent);
+        RefreshQuadMeshPosition();
     }
 
     private void OnDestroy()
     {
-        if(m_verticePosition.IsCreated) 
+        if (m_verticePosition.IsCreated)
             m_verticePosition.Dispose();
     }
-  
 
 
-    public bool m_randomizeAtStart = true;
-    public bool m_randomizeAtEachFrame = true;
 
-    private void Start()
-    {
-        if(m_randomizeAtStart)
-            Randomize32();
-    }
 
-    
 
-    private void Update()
-    {
-        if(m_randomizeAtEachFrame)
-            Randomize32();
-        ApplyComputeRendering();
-    }
+
     private void Randomize32()
     {
         for (int i = 0; i < SNAM16K.ARRAY_MAX_SIZE; i++)
         {
-            float r = m_maxDistanceBounds / 2;
+            float r = m_skinnedMeshBoundDistance / 2;
             m_quadToDisplay[i] = UnityEngine.Random.value > 0.5f;
             m_quadPosition[i] = new Vector3(UnityEngine.Random.Range(-r, r), UnityEngine.Random.Range(-r, r), UnityEngine.Random.Range(-r, r));
             m_quadSizeRadius[i] = UnityEngine.Random.Range(0.5f, 2f);
@@ -70,9 +55,10 @@ public class Ex_SetQuadInDirectionOfCamera : MonoBehaviour
 
 
     private bool m_isInitiatized = false;
-    public  void ApplyComputeRendering()
+    public void RefreshQuadMeshPosition()
     {
-        if (!m_isInitiatized) { 
+        if (!m_isInitiatized)
+        {
             m_isInitiatized = true;
             InitWithCount();
         }
@@ -81,22 +67,21 @@ public class Ex_SetQuadInDirectionOfCamera : MonoBehaviour
             m_objectToLookAt = Camera.main.transform;
         m_job.m_cameraPosition = transform.InverseTransformPoint(m_objectToLookAt.position);
         m_job.m_maxQuad = SNAM16K.ARRAY_MAX_SIZE;
-        m_job.m_quadPosition = m_quadPosition.GetNativeArray();
-        m_job.m_squareSize = m_quadSizeRadius.GetNativeArray();
-        m_job.m_isActiveObject = m_quadToDisplay.GetNativeArray();
         m_job.m_resultVerticepositions = m_verticePosition;
+        m_job.m_radiusFactor = m_radiusFactor;
         JobHandle jh = m_job.Schedule(SNAM16K.ARRAY_MAX_SIZE, 64);
         jh.Complete();
         m_currentMesh.SetVertices(m_job.m_resultVerticepositions);
-        Bounds b = new Bounds(Vector3.zero, Vector3.one * m_maxDistanceBounds);
+        Bounds b = new Bounds(Vector3.zero, Vector3.one * m_skinnedMeshBoundDistance);
         m_skinMeshRenderer.bounds = b;
 
 
     }
     private void OnValidate()
     {
-        if (m_skinMeshRenderer != null ) {
-            Bounds b =new Bounds(Vector3.zero, Vector3.one*m_maxDistanceBounds);
+        if (m_skinMeshRenderer != null)
+        {
+            Bounds b = new Bounds(Vector3.zero, Vector3.one * m_skinnedMeshBoundDistance);
             m_skinMeshRenderer.bounds = b;
             m_skinMeshRenderer.updateWhenOffscreen = true;
             m_skinMeshRenderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
@@ -104,7 +89,7 @@ public class Ex_SetQuadInDirectionOfCamera : MonoBehaviour
             m_skinMeshRenderer.lightProbeUsage = UnityEngine.Rendering.LightProbeUsage.Off;
         }
     }
-    public  void InitWithCount()
+    public void InitWithCount()
     {
         m_currentMesh = new Mesh();
         m_currentMesh.name = "Bullet as square at far distance";
@@ -112,8 +97,8 @@ public class Ex_SetQuadInDirectionOfCamera : MonoBehaviour
         Vector2[] uvs = new Vector2[SNAM16K.ARRAY_MAX_SIZE * 4];
         int[] triangles = new int[SNAM16K.ARRAY_MAX_SIZE * 6];
 
-        m_currentMesh.bounds = new Bounds(Vector3.zero, Vector3.one * m_maxDistanceBounds);
-       
+        m_currentMesh.bounds = new Bounds(Vector3.zero, Vector3.one * m_skinnedMeshBoundDistance);
+
         for (int i = 0; i < SNAM16K.ARRAY_MAX_SIZE; i++)
         {
             int iuv = i * 4;
@@ -134,32 +119,38 @@ public class Ex_SetQuadInDirectionOfCamera : MonoBehaviour
         m_currentMesh.SetTriangles(triangles, 0);
         m_meshFilter.sharedMesh = m_currentMesh;
         m_meshFilter.mesh = m_currentMesh;
-        if (m_skinMeshRenderer != null) {
+        if (m_skinMeshRenderer != null)
+        {
 
             m_skinMeshRenderer.sharedMesh = m_currentMesh;
         }
 
 
         m_job = new ProcessBulletsForParallels();
-        m_job.m_quadPosition= m_quadPosition.GetNativeArray();
-        m_job.m_squareSize= m_quadSizeRadius.GetNativeArray();
+        m_job.m_quadPosition = m_quadPosition.GetNativeArrayHolder().GetNativeArray();
+        m_job.m_squareSize = m_quadSizeRadius.GetNativeArrayHolder().GetNativeArray();
         m_job.m_resultVerticepositions = m_verticePosition;
-        m_job.m_isActiveObject = m_quadToDisplay.GetNativeArray();
-        m_job.m_maxQuad=SNAM16K.ARRAY_MAX_SIZE;
-        ;    }
+        m_job.m_isActiveObject = m_quadToDisplay.GetNativeArrayHolder().GetNativeArray();
+        m_job.m_hidePosition = new Vector3(-404, 404, 404) ;
+        m_job.m_radiusFactor = m_radiusFactor;
+        m_job.m_maxQuad = SNAM16K.ARRAY_MAX_SIZE;
+        ;
 
-    
 
+    }
+
+
+    public float m_radiusFactor = 1.2f;
 
     [BurstCompile(CompileSynchronously = true)]
     public struct ProcessBulletsForParallels : IJobParallelFor
     {
         public int m_maxQuad;
 
-    
-        [ReadOnly]  public NativeArray<bool> m_isActiveObject;
-        [ReadOnly]  public NativeArray<Vector3> m_quadPosition;
-        [ReadOnly]  public NativeArray<float> m_squareSize;
+
+        [ReadOnly] public NativeArray<bool> m_isActiveObject;
+        [ReadOnly] public NativeArray<Vector3> m_quadPosition;
+        [ReadOnly] public NativeArray<float> m_squareSize;
         [NativeDisableParallelForRestriction]
         [WriteOnly] public NativeArray<Vector3> m_resultVerticepositions;
         public Vector3 m_hidePosition;
@@ -169,7 +160,7 @@ public class Ex_SetQuadInDirectionOfCamera : MonoBehaviour
         Quaternion m_ptl;
         Quaternion m_ptr;
 
-       
+        public float m_radiusFactor;
 
         public void Execute(int index)
         {
@@ -179,7 +170,7 @@ public class Ex_SetQuadInDirectionOfCamera : MonoBehaviour
             int vertexIndexPosition = index * 4;
             if (!isBulletUsed)
             {
-                
+
                 m_resultVerticepositions[vertexIndexPosition + 0] = Vector3.zero;
                 m_resultVerticepositions[vertexIndexPosition + 1] = Vector3.zero;
                 m_resultVerticepositions[vertexIndexPosition + 2] = Vector3.zero;
@@ -190,17 +181,17 @@ public class Ex_SetQuadInDirectionOfCamera : MonoBehaviour
             {
                 float radius = m_squareSize[index];
                 float squareSize = (float)Math.Sqrt(radius * radius + radius * radius);
-                Vector3 dir = -(m_quadPosition[index]- m_cameraPosition);
+                Vector3 dir = -(m_quadPosition[index] - m_cameraPosition);
                 Quaternion cQ = Quaternion.LookRotation(dir, Vector3.up);
                 Vector3 position = m_quadPosition[index];
 
                 SetBorderLocal();
-                m_resultVerticepositions[vertexIndexPosition + 0] = position + ((cQ * m_pbl) * Vector3.forward *radius);
-                m_resultVerticepositions[vertexIndexPosition + 1] = position + ((cQ * m_pbr) * Vector3.forward *radius);
-                m_resultVerticepositions[vertexIndexPosition + 2] = position + ((cQ * m_ptl) * Vector3.forward *radius);
-                m_resultVerticepositions[vertexIndexPosition + 3] = position + ((cQ * m_ptr) * Vector3.forward * radius);
+                m_resultVerticepositions[vertexIndexPosition + 0] = position + ((cQ * m_pbl) * Vector3.forward * squareSize * m_radiusFactor);
+                m_resultVerticepositions[vertexIndexPosition + 1] = position + ((cQ * m_pbr) * Vector3.forward * squareSize * m_radiusFactor);
+                m_resultVerticepositions[vertexIndexPosition + 2] = position + ((cQ * m_ptl) * Vector3.forward * squareSize * m_radiusFactor);
+                m_resultVerticepositions[vertexIndexPosition + 3] = position + ((cQ * m_ptr) * Vector3.forward * squareSize * m_radiusFactor);
 
-                    
+
 
             }
         }
@@ -231,3 +222,5 @@ public class Ex_SetQuadInDirectionOfCamera : MonoBehaviour
 
     }
 }
+
+

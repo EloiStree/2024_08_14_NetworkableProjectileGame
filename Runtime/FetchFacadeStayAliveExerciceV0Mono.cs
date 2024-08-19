@@ -125,7 +125,7 @@ public class FetchFacadeStayAliveExerciceV0Mono : A_FacadeStayAliveExerciceMono
 
     public override void GetAllProjectilesPositions(out NativeArray<Vector3> positions)
     {
-        positions = m_projectilsPosition.GetNativeArray();
+        positions = m_projectilsPosition.GetNativeArrayHolder().GetNativeArray();
     }
 
     public override void GetCheckpointCount(out int checkpointCount)

@@ -23,6 +23,7 @@ public class AsteroideJobManagerMono : MonoBehaviour
     public SNAM16K_ProjectileCreatedEvent m_asteroidInGame;
     public SNAM16K_ProjectileMoveConstant m_asteroidMoveUpdateInfo;
     public SNAM16K_ProjectileCapsulePosition  m_asteroidPosition;
+    public SNAM16K_ObjectVector3 m_previousPosition;
     public SNAM16K_ObjectVector3 m_currentPosition;
 
 
@@ -114,22 +115,21 @@ public class AsteroideJobManagerMono : MonoBehaviour
         m_currentTickServerUtcPrevious = m_currentTickServerUtcNow;
         m_currentTickServerUtcNow = DateTime.UtcNow.Ticks;
         STRUCTJOB_ProjectileMoveJob moveJob = new STRUCTJOB_ProjectileMoveJob();
-        moveJob.m_projectileInGame = m_asteroidMoveUpdateInfo.GetNativeArray();
-        moveJob.m_currentExistance = m_asteroidPosition.GetNativeArray();
-        moveJob.m_isUsed = m_isExisting.GetNativeArray();
+        moveJob.m_projectileInGame = m_asteroidMoveUpdateInfo.GetNativeArrayHolder().GetNativeArray();
+        moveJob.m_currentExistance = m_asteroidPosition.GetNativeArrayHolder().GetNativeArray();
+        moveJob.m_isUsed = m_isExisting.GetNativeArrayHolder().GetNativeArray();
         moveJob.m_currentMaxAsteroide = m_numberOfAsteroidsInGame;
         moveJob.m_serverCurrentUtcNowTicks = m_currentTickServerUtcNow;
         moveJob.m_serverCurrentUtcPreviousTicks = m_currentTickServerUtcPrevious;
-        moveJob.m_currentPosition = m_currentPosition.GetNativeArray();
         moveJob.m_hidePosition = new Vector3(-404, -404, -404);
         JobHandle moveJobHandle = moveJob.Schedule(m_numberOfAsteroidsInGame, 64);
         moveJobHandle.Complete();
 
-       m_moveObject.StopCounting();
+        m_moveObject.StopCounting();
         m_outOfBoxed.StartCounting();
         STRUCTJOB_AsteroideOutOfBoundJob outOfBoundJob = new STRUCTJOB_AsteroideOutOfBoundJob();
-        outOfBoundJob.m_destroyEvent = m_asteroidDestroyedEvent.GetNativeArray();
-        outOfBoundJob.m_currentExistance = m_asteroidPosition.GetNativeArray();
+        outOfBoundJob.m_destroyEvent = m_asteroidDestroyedEvent.GetNativeArrayHolder().GetNativeArray();
+        outOfBoundJob.m_currentExistance = m_asteroidPosition.GetNativeArrayHolder().GetNativeArray();
         outOfBoundJob.m_currentMaxAsteroide = m_numberOfAsteroidsInGame;
         outOfBoundJob.m_centerPosition = m_centerOfSpace.position;
         outOfBoundJob.m_maxHeightDistance = m_skyHeight;
@@ -245,8 +245,7 @@ public struct STRUCTJOB_ProjectileMoveJob : IJobParallelFor
     public NativeArray<STRUCT_ProjectileMoveConstant> m_projectileInGame;
 
     public NativeArray<STRUCT_ProjectileCapsulePosition> m_currentExistance;
-    [WriteOnly]
-    public NativeArray<Vector3> m_currentPosition;
+  
     public int m_currentMaxAsteroide;
     public long m_serverCurrentUtcNowTicks;
     public long m_serverCurrentUtcPreviousTicks;
@@ -262,7 +261,7 @@ public struct STRUCTJOB_ProjectileMoveJob : IJobParallelFor
         }
         if (!m_isUsed[index])
         {
-            m_currentPosition[index] = m_hidePosition;
+           
 
             return;
             
@@ -276,7 +275,6 @@ public struct STRUCTJOB_ProjectileMoveJob : IJobParallelFor
         float distance = m_projectileInGame[index].m_speedInMetersPerSecond * timeSinceStart;
         p.m_currentPosition= a.m_startPoint+ a.m_direction * distance;
         m_currentExistance[index] = p;
-        m_currentPosition[index]= p.m_currentPosition;
     }
 }
 

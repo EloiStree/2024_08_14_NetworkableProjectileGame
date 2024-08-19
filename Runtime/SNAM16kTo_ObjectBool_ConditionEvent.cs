@@ -21,9 +21,9 @@ public class SNAM16kTo_ObjectBool_ConditionEvent : MonoBehaviour
     {
         bool hasTrue = false;
         bool hasFalse = false;
-        for (int i = 0; i < m_condition.GetNativeArray().Length; i++)
+        for (int i = 0; i < m_condition.GetNativeArrayHolder().GetNativeArray().Length; i++)
         {
-            bool value = m_condition.GetNativeArray()[i];
+            bool value = m_condition.GetNativeArrayHolder().GetNativeArray()[i];
             if (!hasTrue &&  value)
             {
                 hasTrue = true;

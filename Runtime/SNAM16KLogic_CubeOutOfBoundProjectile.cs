@@ -28,8 +28,8 @@ public class SNAM16KLogic_CubeOutOfBoundProjectile : MonoBehaviour
 
         m_outOfBoxed.StartCounting();
         STRUCTJOB_AsteroideOutOfBoundJob outOfBoundJob = new STRUCTJOB_AsteroideOutOfBoundJob();
-        outOfBoundJob.m_destroyEvent = m_isUsedProjectil.GetNativeArray();
-        outOfBoundJob.m_currentExistance = m_projectileCapsule.GetNativeArray();
+        outOfBoundJob.m_destroyEvent = m_isUsedProjectil.GetNativeArrayHolder().GetNativeArray();
+        outOfBoundJob.m_currentExistance = m_projectileCapsule.GetNativeArrayHolder().GetNativeArray();
         outOfBoundJob.m_currentMaxAsteroide = SNAM16K.ARRAY_MAX_SIZE;
         outOfBoundJob.m_centerPosition = m_centerOfSpace.position;
         outOfBoundJob.m_maxHeightDistance = m_squareWidth/2;

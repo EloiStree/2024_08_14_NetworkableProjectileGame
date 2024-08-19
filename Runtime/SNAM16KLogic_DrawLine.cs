@@ -4,7 +4,6 @@ using UnityEngine;
 public class SNAM16KLogic_DrawLine : MonoBehaviour
 {
 
-    public bool m_useDebugDraw=true;
     public bool m_useUpdate=true;
     public SNAM16K_ObjectBool m_isUsedProjectil;
     public SNAM16K_ProjectileCapsulePosition m_projectileCapsule;
@@ -15,9 +14,9 @@ public class SNAM16KLogic_DrawLine : MonoBehaviour
     public void Update()
     {
         if (m_useUpdate)
-            Apply();
+            DrawLineBetweenCapsulePoints();
     }
-    public void Apply()
+    public void DrawLineBetweenCapsulePoints()
     {
 
         m_applyTime.StartCounting();

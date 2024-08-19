@@ -55,7 +55,7 @@ public class AsteroidTransformViewMono : MonoBehaviour {
     public void Update()
     {
         STRUCTJOB_AsteroideMoveApplyToTransform moveApplyToTransform = new STRUCTJOB_AsteroideMoveApplyToTransform();
-        moveApplyToTransform.m_currentExistance = m_manager.m_asteroidPosition.GetNativeArray();
+        moveApplyToTransform.m_currentExistance = m_manager.m_asteroidPosition.GetNativeArrayHolder().GetNativeArray();
         moveApplyToTransform.m_currentMaxAsteroide = m_manager.m_numberOfAsteroidsInGame;
         TransformAccessArray transformAccessArray = new TransformAccessArray(m_transformToUsed.Length);
         transformAccessArray.SetTransforms(m_transformToUsed);
