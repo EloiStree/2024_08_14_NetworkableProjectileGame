@@ -182,12 +182,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4f57a538a7f5c4e4a850c5733b3eb604, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_projectilePoolManager: {fileID: 2129105470503853379}
   m_turretTip: {fileID: 3808797494345533769}
+  m_spawnerAllowToFire: 1
   m_timeBetweenProjectils: 0.001
   m_projectileSpeed: 10
   m_projectileRadius: 0.1
-  m_projectilePoolManager: {fileID: 2129105470503853379}
-  m_lastFire: 
+  m_whenLastSpawnRequested: 
 --- !u!114 &8517731109421806540
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -250,12 +251,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4f57a538a7f5c4e4a850c5733b3eb604, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_projectilePoolManager: {fileID: 2129105470503853379}
   m_turretTip: {fileID: 6266361779041191326}
+  m_spawnerAllowToFire: 1
   m_timeBetweenProjectils: 0.001
   m_projectileSpeed: 10
   m_projectileRadius: 0.1
-  m_projectilePoolManager: {fileID: 2129105470503853379}
-  m_lastFire: 
+  m_whenLastSpawnRequested: 
 --- !u!114 &8748910265447772009
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1058,11 +1060,12 @@ MonoBehaviour:
   m_projectilDirection: {fileID: 2862383595980310499}
   m_projectilSpeed: {fileID: 7488879949130180019}
   m_createdEvent: {fileID: 602197330201727344}
-  m_useUnityEvent: 1
-  m_onCreatedEvent:
-    m_PersistentCalls:
-      m_Calls: []
   m_lastSpawn: 
+  m_maxAttemptAtFindingClaim: 500
+  m_lastCursorIndex: 0
+  m_unclaimedQueueCount: 1000
+  m_queueCountState: 0
+  m_allowRandomOverride: 1
 --- !u!114 &8991453532978516434
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1075,7 +1078,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6d54fad5ae4fb894d8120dad01e2a050, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_useDebugDraw: 1
   m_useUpdate: 1
   m_isUsedProjectil: {fileID: 256259897425945585}
   m_projectileCapsule: {fileID: 2862383595980310499}
@@ -2775,12 +2777,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4f57a538a7f5c4e4a850c5733b3eb604, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_projectilePoolManager: {fileID: 2129105470503853379}
   m_turretTip: {fileID: 7060353405768990067}
+  m_spawnerAllowToFire: 1
   m_timeBetweenProjectils: 0.001
   m_projectileSpeed: 10
   m_projectileRadius: 0.1
-  m_projectilePoolManager: {fileID: 2129105470503853379}
-  m_lastFire: 
+  m_whenLastSpawnRequested: 
 --- !u!114 &7291125713351989320
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3564,12 +3567,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4f57a538a7f5c4e4a850c5733b3eb604, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_projectilePoolManager: {fileID: 2129105470503853379}
   m_turretTip: {fileID: 2850274043311486326}
+  m_spawnerAllowToFire: 1
   m_timeBetweenProjectils: 0.001
   m_projectileSpeed: 10
   m_projectileRadius: 0.1
-  m_projectilePoolManager: {fileID: 2129105470503853379}
-  m_lastFire: 
+  m_whenLastSpawnRequested: 
 --- !u!114 &1203694465015801571
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4060,10 +4064,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7807fe1b785956942b82a2296abb02cc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_isExisting: {fileID: 256259897425945585}
-  m_isExistingPrevious: {fileID: 7157917992502774991}
-  m_isCreated: {fileID: 7672177700237305907}
-  m_isDestroyed: {fileID: 8414074057638674987}
+  m_isExistingCurrentState: {fileID: 0}
+  m_isExistingPreviousState: {fileID: 0}
+  m_hadBeenCreatedDuringDelta: {fileID: 0}
+  m_hadBeenDestroyDuringDelta: {fileID: 0}
   m_onIndexCreated:
     m_PersistentCalls:
       m_Calls:
@@ -4094,7 +4098,8 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-  m_applyCurrentToPrevious: 1
+  m_lastPushedCreated: 0
+  m_lastPushedDestroyed: 0
   m_useUpdate: 1
 --- !u!114 &296355217252445917
 MonoBehaviour:
@@ -4109,7 +4114,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_created: {fileID: 602197330201727344}
-  m_destroy: {fileID: 3807106869564644793}
   m_onCreated:
     m_PersistentCalls:
       m_Calls:
@@ -4125,9 +4129,6 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-  m_onDestroyed:
-    m_PersistentCalls:
-      m_Calls: []
   m_lastCreated:
     m_poolId: 0
     m_poolItemIndex: 0
@@ -4137,10 +4138,6 @@ MonoBehaviour:
     m_startDirection: {x: 0, y: 0, z: 0}
     m_speedInMetersPerSecond: 0
     m_colliderRadius: 0
-  m_lastDestroyed:
-    m_poolId: 0
-    m_poolItemIndex: 0
-    m_serverUtcNowTicks: 0
 --- !u!114 &2017436394994966812
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4315,9 +4312,8 @@ MonoBehaviour:
   m_quadPosition: {fileID: 7069095696416452686}
   m_quadSizeRadius: {fileID: 5328983792548310408}
   m_objectToLookAt: {fileID: 0}
-  m_maxDistanceBounds: 65.535
-  m_randomizeAtStart: 0
-  m_randomizeAtEachFrame: 0
+  m_skinnedMeshBoundDistance: 65
+  m_radiusFactor: 1.2
 --- !u!33 &8880469806616424729
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -4799,9 +4795,8 @@ MonoBehaviour:
   m_quadPosition: {fileID: 8972870966063450216}
   m_quadSizeRadius: {fileID: 5682325795282759817}
   m_objectToLookAt: {fileID: 0}
-  m_maxDistanceBounds: 65.535
-  m_randomizeAtStart: 0
-  m_randomizeAtEachFrame: 0
+  m_skinnedMeshBoundDistance: 65
+  m_radiusFactor: 1.2
 --- !u!33 &1973556000142275769
 MeshFilter:
   m_ObjectHideFlags: 0

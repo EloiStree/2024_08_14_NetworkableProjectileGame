@@ -21,12 +21,20 @@ public class SNAM16KLogic_MoveProjectiles : MonoBehaviour
     {
         m_now = DateTime.UtcNow.Ticks;
         m_previous = m_now;
+        Invoke("Refresh", 1);
+    }
+
+    public void Refresh()
+    {
+        m_now = DateTime.UtcNow.Ticks;
+        m_previous = m_now;
         m_job = new STRUCTJOB_ProjectileMoveJob();
         m_job.m_isUsed = m_isUsedProjectile.GetNativeArrayHolder().GetNativeArray();
         m_job.m_projectileInGame = m_projectileMoveInformation.GetNativeArrayHolder().GetNativeArray();
         m_job.m_currentExistance = m_projectileCapsule.GetNativeArrayHolder().GetNativeArray();
-            m_isInit = true;
+        m_isInit = true;
     }
+
     private bool m_isInit;
     public void Update()
     {
