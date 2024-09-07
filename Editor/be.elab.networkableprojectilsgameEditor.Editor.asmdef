@@ -1,0 +1,19 @@
+{
+    "name": "be.elab.networkableprojectilsgameEditor",
+    "rootNamespace": "",
+    "references": [
+        "be.eloistree.networkableprojectilsgame",
+        "be.elab.networkableprojectilsgame"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
