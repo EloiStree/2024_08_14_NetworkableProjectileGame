@@ -16,20 +16,16 @@ public class GenericProjectileSpawnerMono : MonoBehaviour
     public float m_projectileSpeed = 10f;
     public float m_projectileRadius = 0.1f;
 
-
     [Header("Debug")]
     public string m_whenLastSpawnRequested;
-
     public void SetAsAllowedToFire(bool isAllowToFire)
     {
         m_spawnerAllowToFire = isAllowToFire;
     }
-
     public void OnEnable()
     {
         StartCoroutine(Coroutine());
     }
-
     public IEnumerator Coroutine() { 
     
         while (true)
@@ -44,12 +40,16 @@ public class GenericProjectileSpawnerMono : MonoBehaviour
         }
     
     }
-
     [ContextMenu("Fire Projectile")]
     public void SpawnProjectile()
     {
 
-        m_projectilePoolManager.Spawn(m_turretTip.position, m_turretTip.forward , m_turretTip.rotation, m_projectileSpeed, m_projectileRadius);
+        m_projectilePoolManager.Spawn(
+            m_turretTip.position,
+            m_turretTip.forward ,
+            m_turretTip.rotation,
+            m_projectileSpeed, 
+            m_projectileRadius);
         m_whenLastSpawnRequested = DateTime.UtcNow.ToString("HH:mm:ss.fff");
     }
 }
