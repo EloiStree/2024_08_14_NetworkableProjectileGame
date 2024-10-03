@@ -19,15 +19,18 @@ public struct STRUCTJOB_ProjectileCollisionJob : IJobParallelFor
     {
         if (!m_isUsed[index])
             m_touchingTarget[index] = false;
-          STRUCT_ProjectileCapsulePosition p = m_capsuleMove[index];
+          STRUCT_ProjectileCapsulePosition projectile = m_capsuleMove[index];
 
-        float td1 = Vector3.Distance(m_targetCapsule.m_currentPosition, p.m_currentPosition);
-        float td2 = Vector3.Distance(m_targetCapsule.m_previousPosition, p.m_previousPosition);
-        if (td1 > m_targetInfluenceRadius && td2 > m_targetInfluenceRadius)
-        {
-            m_touchingTarget[index] = false;
-            return;
-        }
+
+        //TRY TO DISQUALIFY PROJECTILES WITHOUT COMPLEX MATHEMATICS.
+        //float td1 = Vector3.Distance(m_targetCapsule.m_currentPosition, projectile.m_currentPosition);
+        //float td2 = Vector3.Distance(m_targetCapsule.m_previousPosition, projectile.m_previousPosition);
+
+        //if (td1 > m_targetInfluenceRadius && td2 > m_targetInfluenceRadius)
+        //{
+        //    m_touchingTarget[index] = false;
+        //    return;
+        //}
        
 
 
@@ -40,11 +43,11 @@ public struct STRUCTJOB_ProjectileCollisionJob : IJobParallelFor
                 out shortestEndLineB,
                 m_targetCapsule.m_previousPosition,
                 m_targetCapsule.m_currentPosition,
-                p.m_previousPosition,
-                p.m_currentPosition,
+                projectile.m_previousPosition,
+                projectile.m_currentPosition,
                 false);
             Vector3 forward = (shortestEndLineB - shortestStartLineA);
-            m_touchingTarget[index] = forward.magnitude < (p.m_capsuleRadius + m_targetCapsule.m_capsuleRadius);
+            m_touchingTarget[index] = forward.magnitude < (projectile.m_capsuleRadius + m_targetCapsule.m_capsuleRadius);
            
     }
 }
