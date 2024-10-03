@@ -230,10 +230,10 @@ MonoBehaviour:
   m_spawnerAllowToFire: 1
   m_timeBetweenProjectilsMin: 0.05
   m_timeBetweenProjectilsMax: 0.6
-  m_projectileSpeedMin: 10
-  m_projectileSpeedMax: 60
-  m_projectileRadiusMin: 0.05
-  m_projectileRadiusMax: 0.2
+  m_projectileSpeedMin: 0.5
+  m_projectileSpeedMax: 6
+  m_projectileRadiusMin: 0.1
+  m_projectileRadiusMax: 0.4
   m_whenLastSpawnRequested: 
 --- !u!1 &7170328283235524478
 GameObject:
@@ -260,7 +260,7 @@ Transform:
   m_GameObject: {fileID: 7170328283235524478}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.05, z: 0}
+  m_LocalPosition: {x: 0, y: 0.1, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -474,7 +474,7 @@ PrefabInstance:
     - target: {fileID: 5779799553944938084, guid: cac8d33e8c508344190e949b760e5f8f,
         type: 3}
       propertyPath: m_maxDistance
-      value: 7
+      value: 32.767
       objectReference: {fileID: 0}
     - target: {fileID: 6019145448450717647, guid: cac8d33e8c508344190e949b760e5f8f,
         type: 3}
@@ -498,6 +498,10 @@ PrefabInstance:
         type: 3}
       insertIndex: -1
       addedObject: {fileID: 4804609915334035226}
+    - targetCorrespondingSourceObject: {fileID: 5489460741890839943, guid: cac8d33e8c508344190e949b760e5f8f,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 2971916828746051429}
   m_SourcePrefab: {fileID: 100100000, guid: cac8d33e8c508344190e949b760e5f8f, type: 3}
 --- !u!4 &4181247754008944854 stripped
 Transform:
@@ -523,8 +527,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a60ba3abacd657e4a9e5af89159e66b6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_anchor: {fileID: 0}
-  m_frontTopRightCorner: {fileID: 0}
+  m_anchor: {fileID: 4743233712966649940}
+  m_frontTopRightCorner: {fileID: 8029724604089809753}
   m_whatToMove: {fileID: 0}
 --- !u!114 &5047305303967728137 stripped
 MonoBehaviour:
@@ -544,6 +548,27 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 2540922147107834951}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &8029162011517655488 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 5489460741890839943, guid: cac8d33e8c508344190e949b760e5f8f,
+    type: 3}
+  m_PrefabInstance: {fileID: 2540922147107834951}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &2971916828746051429
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8029162011517655488}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 02e1ce1473ebaeb4c8e4d8ccaa31612f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_targetSNAM: {fileID: 0}
+  m_arrayFetched: 0000000000000000000000000000000000000000
+  m_useUpdateFetch: 1
 --- !u!1001 &3445076262082142691
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -565,7 +590,7 @@ PrefabInstance:
     - target: {fileID: 3449191399465329654, guid: a186c086905889243b8311fc9d7931c3,
         type: 3}
       propertyPath: m_projectileSpeed
-      value: 7
+      value: 15
       objectReference: {fileID: 0}
     - target: {fileID: 3449191399465329654, guid: a186c086905889243b8311fc9d7931c3,
         type: 3}
@@ -670,11 +695,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_target
       value: 
-      objectReference: {fileID: 1256728110531221829}
+      objectReference: {fileID: 0}
     - target: {fileID: 3449191399465329654, guid: a186c086905889243b8311fc9d7931c3,
         type: 3}
       propertyPath: m_projectileSpeed
-      value: 8
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 3449191399465329654, guid: a186c086905889243b8311fc9d7931c3,
         type: 3}
@@ -779,11 +804,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_target
       value: 
-      objectReference: {fileID: 1256728110531221829}
+      objectReference: {fileID: 0}
     - target: {fileID: 3449191399465329654, guid: a186c086905889243b8311fc9d7931c3,
         type: 3}
       propertyPath: m_projectileSpeed
-      value: 7
+      value: 8
       objectReference: {fileID: 0}
     - target: {fileID: 3449191399465329654, guid: a186c086905889243b8311fc9d7931c3,
         type: 3}
@@ -892,7 +917,7 @@ PrefabInstance:
     - target: {fileID: 3449191399465329654, guid: a186c086905889243b8311fc9d7931c3,
         type: 3}
       propertyPath: m_projectileSpeed
-      value: 8
+      value: 12
       objectReference: {fileID: 0}
     - target: {fileID: 3449191399465329654, guid: a186c086905889243b8311fc9d7931c3,
         type: 3}
@@ -1046,17 +1071,17 @@ PrefabInstance:
     - target: {fileID: 2656079412761521373, guid: ac05fdb7719d86144869e78a6b05f1cf,
         type: 3}
       propertyPath: m_speed
-      value: 80
+      value: 20
       objectReference: {fileID: 0}
     - target: {fileID: 2656079412761521373, guid: ac05fdb7719d86144869e78a6b05f1cf,
         type: 3}
       propertyPath: m_radius
-      value: 1
+      value: 0.1
       objectReference: {fileID: 0}
     - target: {fileID: 2656079412761521373, guid: ac05fdb7719d86144869e78a6b05f1cf,
         type: 3}
       propertyPath: m_bulletsPerExplosion
-      value: 100
+      value: 3000
       objectReference: {fileID: 0}
     - target: {fileID: 6340038832323815088, guid: ac05fdb7719d86144869e78a6b05f1cf,
         type: 3}
@@ -1066,7 +1091,7 @@ PrefabInstance:
     - target: {fileID: 6340038832323815088, guid: ac05fdb7719d86144869e78a6b05f1cf,
         type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -1110,7 +1135,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-  m_secondsBetweenTicks: 0.1
+  m_secondsBetweenTicks: 5
 --- !u!114 &6296299495291908125 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 2656079412761521373, guid: ac05fdb7719d86144869e78a6b05f1cf,
