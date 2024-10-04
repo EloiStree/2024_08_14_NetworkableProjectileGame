@@ -68,7 +68,7 @@ public class SquareProjectilesSpawnerMono : MonoBehaviour
 
         m_projectilePoolManager.Spawn(
             positionStart,
-            direction,
+            direction.normalized,
             rotRandom,
             speed,
             radius);

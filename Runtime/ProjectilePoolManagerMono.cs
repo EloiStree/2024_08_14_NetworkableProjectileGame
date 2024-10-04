@@ -42,6 +42,7 @@ public class ProjectilePoolManagerMono : MonoBehaviour {
     public bool m_allowRandomOverride = true;
     public void Spawn(Vector3 position, Vector3 forward, Quaternion rotation, float projectileSpeed, float projectileRadius)
     {
+        forward= forward.normalized;
         bool isClaimable = false;
         int index = -1;
 
