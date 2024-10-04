@@ -33,7 +33,7 @@ public class Split16K_CapsulePositionsToVector3 : MonoBehaviour
     {
         m_job.Schedule(SNAM16K.ARRAY_MAX_SIZE, 64).Complete();
     }
-    [BurstCompile]
+    [BurstCompile(CompileSynchronously =true)]
     public struct STRUCTJOB_Split16K_CapsulePositionsToVector3 : IJobParallelFor
     {
         [ReadOnly]

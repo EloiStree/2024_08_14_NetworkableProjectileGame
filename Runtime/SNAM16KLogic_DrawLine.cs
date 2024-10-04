@@ -20,6 +20,7 @@ public class SNAM16KLogic_DrawLine : MonoBehaviour
     {
 
         m_applyTime.StartCounting();
+#if UNITY_EDITOR 
         for (int i = 0; i < SNAM16K.ARRAY_MAX_SIZE; i++)
         {
             if (m_isUsedProjectil[i])
@@ -29,6 +30,8 @@ public class SNAM16KLogic_DrawLine : MonoBehaviour
                 Debug.DrawLine(pos, pos2, m_color);
             }
         }
+#endif
+
         m_applyTime.StopCounting();
     }
 }

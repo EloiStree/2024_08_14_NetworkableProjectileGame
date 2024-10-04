@@ -11,6 +11,7 @@ public class SNAM16kLogic_QuadFacingCamera : MonoBehaviour
 {
     public MeshFilter m_meshFilter;
     public SkinnedMeshRenderer m_skinMeshRenderer;
+    
 
     [Header("Debug")]
     public Mesh m_currentMesh;
@@ -29,6 +30,31 @@ public class SNAM16kLogic_QuadFacingCamera : MonoBehaviour
             m_objectToLookAt = Camera.main.transform;
         m_verticePosition = new NativeArray<Vector3>(SNAM16K.ARRAY_MAX_SIZE * 4, Allocator.Persistent);
         RefreshQuadMeshPosition();
+        Hum();
+        Invoke("RefreshNativeArray", 1);
+
+        RefreshNativeArray();
+    }
+
+    private void RefreshNativeArray()
+    {
+       m_job.m_quadPosition = m_quadPosition.GetNativeArrayHolder().GetNativeArray();
+       m_job.m_squareSize = m_quadSizeRadius.GetNativeArrayHolder().GetNativeArray();
+       m_job.m_isActiveObject = m_quadToDisplay.GetNativeArrayHolder().GetNativeArray();
+
+    }
+
+    private void Hum()
+    {
+        if (m_skinMeshRenderer != null)
+        {
+            Bounds b = new Bounds(Vector3.zero, Vector3.one * m_skinnedMeshBoundDistance);
+            m_skinMeshRenderer.bounds = b;
+            m_skinMeshRenderer.updateWhenOffscreen = true;
+            m_skinMeshRenderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
+            m_skinMeshRenderer.receiveShadows = false;
+            m_skinMeshRenderer.lightProbeUsage = UnityEngine.Rendering.LightProbeUsage.Off;
+        }
     }
 
     private void OnDestroy()
@@ -63,32 +89,22 @@ public class SNAM16kLogic_QuadFacingCamera : MonoBehaviour
             InitWithCount();
         }
 
+        Hum();
         if (m_objectToLookAt == null)
             m_objectToLookAt = Camera.main.transform;
         m_job.m_cameraPosition = transform.InverseTransformPoint(m_objectToLookAt.position);
         m_job.m_maxQuad = SNAM16K.ARRAY_MAX_SIZE;
-        m_job.m_resultVerticepositions = m_verticePosition;
+        m_job.m_resultVerticePositions = m_verticePosition;
         m_job.m_radiusFactor = m_radiusFactor;
         JobHandle jh = m_job.Schedule(SNAM16K.ARRAY_MAX_SIZE, 64);
         jh.Complete();
-        m_currentMesh.SetVertices(m_job.m_resultVerticepositions);
+        m_currentMesh.SetVertices(m_job.m_resultVerticePositions);
         Bounds b = new Bounds(Vector3.zero, Vector3.one * m_skinnedMeshBoundDistance);
         m_skinMeshRenderer.bounds = b;
 
 
     }
-    private void OnValidate()
-    {
-        if (m_skinMeshRenderer != null)
-        {
-            Bounds b = new Bounds(Vector3.zero, Vector3.one * m_skinnedMeshBoundDistance);
-            m_skinMeshRenderer.bounds = b;
-            m_skinMeshRenderer.updateWhenOffscreen = true;
-            m_skinMeshRenderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
-            m_skinMeshRenderer.receiveShadows = false;
-            m_skinMeshRenderer.lightProbeUsage = UnityEngine.Rendering.LightProbeUsage.Off;
-        }
-    }
+
     public void InitWithCount()
     {
         m_currentMesh = new Mesh();
@@ -129,20 +145,55 @@ public class SNAM16kLogic_QuadFacingCamera : MonoBehaviour
         m_job = new ProcessBulletsForParallels();
         m_job.m_quadPosition = m_quadPosition.GetNativeArrayHolder().GetNativeArray();
         m_job.m_squareSize = m_quadSizeRadius.GetNativeArrayHolder().GetNativeArray();
-        m_job.m_resultVerticepositions = m_verticePosition;
+        m_job.m_resultVerticePositions = m_verticePosition;
         m_job.m_isActiveObject = m_quadToDisplay.GetNativeArrayHolder().GetNativeArray();
-        m_job.m_hidePosition = new Vector3(-404, 404, 404) ;
+        m_job.m_hidePosition = new Vector3(-404, 404, 404);
         m_job.m_radiusFactor = m_radiusFactor;
         m_job.m_maxQuad = SNAM16K.ARRAY_MAX_SIZE;
         ;
 
+        IgnoreWeighBoneError();
 
     }
 
+    private void IgnoreWeighBoneError()
+    {
+
+        // Get the mesh from the SkinnedMeshRenderer
+        Mesh mesh = m_skinMeshRenderer.sharedMesh;
+
+        // Create an array for bone weights (one bone influences all vertices)
+        BoneWeight[] boneWeights = new BoneWeight[mesh.vertexCount];
+
+        // Create the bind pose for the single bone (which is the transform of the object itself)
+        Matrix4x4[] bindPoses = new Matrix4x4[1]; // Only one bone
+
+        // The bind pose is the inverse of the object's local-to-world matrix
+        bindPoses[0] = transform.worldToLocalMatrix * transform.localToWorldMatrix;
+
+        // Assign bone weights to each vertex (all vertices are influenced by this single bone)
+        for (int i = 0; i < boneWeights.Length; i++)
+        {
+            // Assign all vertices to be controlled by the single bone at index 0
+            boneWeights[i].boneIndex0 = 0;  // Single bone index
+            boneWeights[i].weight0 = 1f;    // Full weight of 1 for the only bone
+        }
+
+        // Assign the bone weights and bind poses to the mesh
+        mesh.boneWeights = boneWeights;
+        mesh.bindposes = bindPoses;
+
+        // Assign the object's transform as the single bone
+        m_skinMeshRenderer.bones = new Transform[] { transform };
+
+        // Now the mesh is influenced by its own transform as a bone
+    }
 
     public float m_radiusFactor = 1.2f;
 
-    [BurstCompile(CompileSynchronously = true)]
+       [BurstCompile(CompileSynchronously = true)]
+
+    // [BurstCompile]
     public struct ProcessBulletsForParallels : IJobParallelFor
     {
         public int m_maxQuad;
@@ -152,7 +203,7 @@ public class SNAM16kLogic_QuadFacingCamera : MonoBehaviour
         [ReadOnly] public NativeArray<Vector3> m_quadPosition;
         [ReadOnly] public NativeArray<float> m_squareSize;
         [NativeDisableParallelForRestriction]
-        [WriteOnly] public NativeArray<Vector3> m_resultVerticepositions;
+        [WriteOnly] public NativeArray<Vector3> m_resultVerticePositions;
         public Vector3 m_hidePosition;
         public Vector3 m_cameraPosition;
         Quaternion m_pbl;
@@ -171,10 +222,10 @@ public class SNAM16kLogic_QuadFacingCamera : MonoBehaviour
             if (!isBulletUsed)
             {
 
-                m_resultVerticepositions[vertexIndexPosition + 0] = Vector3.zero;
-                m_resultVerticepositions[vertexIndexPosition + 1] = Vector3.zero;
-                m_resultVerticepositions[vertexIndexPosition + 2] = Vector3.zero;
-                m_resultVerticepositions[vertexIndexPosition + 3] = Vector3.zero;
+                m_resultVerticePositions[vertexIndexPosition + 0] = Vector3.zero;
+                m_resultVerticePositions[vertexIndexPosition + 1] = Vector3.zero;
+                m_resultVerticePositions[vertexIndexPosition + 2] = Vector3.zero;
+                m_resultVerticePositions[vertexIndexPosition + 3] = Vector3.zero;
                 return;
             }
             else
@@ -186,10 +237,10 @@ public class SNAM16kLogic_QuadFacingCamera : MonoBehaviour
                 Vector3 position = m_quadPosition[index];
 
                 SetBorderLocal();
-                m_resultVerticepositions[vertexIndexPosition + 0] = position + ((cQ * m_pbl) * Vector3.forward * squareSize * m_radiusFactor);
-                m_resultVerticepositions[vertexIndexPosition + 1] = position + ((cQ * m_pbr) * Vector3.forward * squareSize * m_radiusFactor);
-                m_resultVerticepositions[vertexIndexPosition + 2] = position + ((cQ * m_ptl) * Vector3.forward * squareSize * m_radiusFactor);
-                m_resultVerticepositions[vertexIndexPosition + 3] = position + ((cQ * m_ptr) * Vector3.forward * squareSize * m_radiusFactor);
+                m_resultVerticePositions[vertexIndexPosition + 0] = position + ((cQ * m_pbl) * Vector3.forward * squareSize * m_radiusFactor);
+                m_resultVerticePositions[vertexIndexPosition + 1] = position + ((cQ * m_pbr) * Vector3.forward * squareSize * m_radiusFactor);
+                m_resultVerticePositions[vertexIndexPosition + 2] = position + ((cQ * m_ptl) * Vector3.forward * squareSize * m_radiusFactor);
+                m_resultVerticePositions[vertexIndexPosition + 3] = position + ((cQ * m_ptr) * Vector3.forward * squareSize * m_radiusFactor);
 
 
 

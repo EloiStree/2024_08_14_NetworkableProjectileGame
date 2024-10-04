@@ -50,7 +50,6 @@ public class SNAM16kLogic_QuadLineFacingCamera : MonoBehaviour
     }
 
 
-    public bool[] m_wtf = new bool[4];
     public void RefreshQuadMeshPosition()
     {
         if (!m_isInitiatized)
@@ -58,7 +57,7 @@ public class SNAM16kLogic_QuadLineFacingCamera : MonoBehaviour
             m_isInitiatized = true;
             InitWithCount();
         }
-
+        Hum();
         if (m_objectToLookAt == null)
             m_objectToLookAt = Camera.main.transform;
         m_job.m_cameraPosition = transform.InverseTransformPoint(m_objectToLookAt.position);
@@ -101,7 +100,7 @@ public class SNAM16kLogic_QuadLineFacingCamera : MonoBehaviour
 
     private bool m_isInitiatized = false;
    
-    private void OnValidate()
+    private void Hum()
     {
         if (m_skinMeshRenderer != null)
         {
@@ -156,12 +155,49 @@ public class SNAM16kLogic_QuadLineFacingCamera : MonoBehaviour
         m_job.m_resultVerticepositions = m_quadCornerPosition;
         m_job.m_hidePosition = new Vector3(-404,404,404);
         ;
+
+        IgnoreWeighBoneError();
+
+    }
+
+    private void IgnoreWeighBoneError()
+    {
+
+        // Get the mesh from the SkinnedMeshRenderer
+        Mesh mesh = m_skinMeshRenderer.sharedMesh;
+
+        // Create an array for bone weights (one bone influences all vertices)
+        BoneWeight[] boneWeights = new BoneWeight[mesh.vertexCount];
+
+        // Create the bind pose for the single bone (which is the transform of the object itself)
+        Matrix4x4[] bindPoses = new Matrix4x4[1]; // Only one bone
+
+        // The bind pose is the inverse of the object's local-to-world matrix
+        bindPoses[0] = transform.worldToLocalMatrix * transform.localToWorldMatrix;
+
+        // Assign bone weights to each vertex (all vertices are influenced by this single bone)
+        for (int i = 0; i < boneWeights.Length; i++)
+        {
+            // Assign all vertices to be controlled by the single bone at index 0
+            boneWeights[i].boneIndex0 = 0;  // Single bone index
+            boneWeights[i].weight0 = 1f;    // Full weight of 1 for the only bone
+        }
+
+        // Assign the bone weights and bind poses to the mesh
+        mesh.boneWeights = boneWeights;
+        mesh.bindposes = bindPoses;
+
+        // Assign the object's transform as the single bone
+        m_skinMeshRenderer.bones = new Transform[] { transform };
+
+        // Now the mesh is influenced by its own transform as a bone
     }
 
     #endregion
 
 
     [BurstCompile(CompileSynchronously = true)]
+    //[BurstCompile]
     public struct STRUCTJOB_ProcessLineQuadFacingCamera : IJobParallelFor
     {
       
@@ -241,8 +277,6 @@ public class SNAM16kLogic_QuadLineFacingCamera : MonoBehaviour
         {
             return Rotated(vector, Quaternion.Euler(x, y, z), pivot);
         }
-
-
     }
 }
 

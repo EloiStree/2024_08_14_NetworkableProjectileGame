@@ -695,7 +695,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_sample: {x: 0, y: 0, z: 0}
-  m_guid: b0220933-4e63-4635-9b5b-f9c4521aa2b5
+  m_guid: 6ad19e9c-bb48-4075-ab5d-de9f48cf2186
 --- !u!114 &7202264459768383963
 MonoBehaviour:
   m_ObjectHideFlags: 0
