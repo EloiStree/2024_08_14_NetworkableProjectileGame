@@ -2,6 +2,7 @@
 using UnityEngine;
 using Unity.Collections;
 using Unity.Jobs;
+using Eloi.SNAM;
 public class SNAM16K_SphereColliderToSphereCollisions : MonoBehaviour
 {
 

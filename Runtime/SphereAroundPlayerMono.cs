@@ -4,6 +4,7 @@ using System.Linq;
 using Unity.Collections;
 using Unity.Jobs;
 using UnityEngine;
+using Eloi.SNAM;
 
 public class SphereAroundPlayerMono : MonoBehaviour
 {

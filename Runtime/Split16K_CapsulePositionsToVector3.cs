@@ -4,7 +4,7 @@ using Unity.Burst;
 using Unity.Collections;
 using Unity.Jobs;
 using UnityEngine;
-
+using Eloi.SNAM;
 public class Split16K_CapsulePositionsToVector3 : MonoBehaviour
 {
     

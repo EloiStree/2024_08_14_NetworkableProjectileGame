@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Unity.Collections;
 using UnityEngine;
 using UnityEngine.Events;
+using Eloi.SNAM;
 
 public class ProjectilePoolManagerMono : MonoBehaviour {
 

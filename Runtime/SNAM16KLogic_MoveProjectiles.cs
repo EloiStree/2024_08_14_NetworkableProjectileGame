@@ -2,6 +2,7 @@
 using System;
 using Unity.Jobs;
 using UnityEngine;
+using Eloi.SNAM;
 
 public class SNAM16KLogic_MoveProjectiles : MonoBehaviour
 {

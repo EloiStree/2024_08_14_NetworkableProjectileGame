@@ -2,10 +2,10 @@
     "name": "be.elab.networkableprojectilsgame",
     "rootNamespace": "",
     "references": [
-        "GUID:2665a8d13d1b3f18800f46e256720795",
-        "GUID:35c40feb6e9058544b74f5eaea5a8275",
-        "GUID:016d8f0c084de8f47aab6568bc77c8e9",
-        "GUID:86821ffa28f47e044a7aa6c616b7764d"
+        "Unity.Burst",
+        "be.elab.snam16k",
+        "be.elab.watchexecutetime",
+        "be.elab.capsulecollisionutility"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

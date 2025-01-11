@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Eloi.SNAM;
 
 public class SNAM16KLogic_DebugCollisionFromIndex : MonoBehaviour
 {

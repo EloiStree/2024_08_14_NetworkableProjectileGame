@@ -1,6 +1,7 @@
 ﻿using Unity.Jobs;
 using UnityEngine;
 
+using Eloi.SNAM;
 public class SNAM16KLogic_GeneralSquareBoundary : MonoBehaviour
 {
     public float m_maxDistance = ushort.MaxValue/2000;
